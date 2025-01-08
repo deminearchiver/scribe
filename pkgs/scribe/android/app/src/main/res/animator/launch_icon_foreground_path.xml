@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+  <objectAnimator
+    android:duration="200"
+    android:propertyName="strokeWidth"
+    android:startOffset="100"
+    android:valueFrom="0"
+    android:valueTo="14.2" />
+  <objectAnimator
+    android:duration="1400"
+    android:interpolator="@anim/standard"
+    android:propertyName="trimPathStart"
+    android:startOffset="100"
+    android:valueFrom="1"
+    android:valueTo="0" />
+</set>

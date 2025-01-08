@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="text_button_label">Text</string>
+  <string name="image_button_label">Image</string>
+  <string name="list_button_label">List</string>
+
+  <string name="new_shortcut_short_label">New</string>
+  <string name="new_shortcut_long_label">Create new</string>
+  <string name="new_shortcut_disabled_message">Disabled</string>
+  <string name="open_button_label">Open Scribe</string>
+  <string name="create_new_headline">New note</string>
+    <string name="create_new_supporting_text">Create a new note</string>
+</resources>

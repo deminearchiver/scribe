@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "scribe (debug mode)",
+      "cwd": "pkgs/scribe",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "scribe (profile mode)",
+      "cwd": "pkgs/scribe",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "scribe (release mode)",
+      "cwd": "pkgs/scribe",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+  ]
+}

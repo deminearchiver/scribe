@@ -1,0 +1,2 @@
+F:/Victor/GitHub/Repositories/project10/pkgs/scribe/android/app/.cxx/Debug/2w4dg174/x86_64/CMakeFiles/edit_cache.dir
+F:/Victor/GitHub/Repositories/project10/pkgs/scribe/android/app/.cxx/Debug/2w4dg174/x86_64/CMakeFiles/rebuild_cache.dir

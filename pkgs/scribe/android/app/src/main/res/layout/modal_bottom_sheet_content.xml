@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  android:id="@+id/content"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:paddingTop="24dp"
+  android:paddingBottom="20dp">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="24dp">
+
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:orientation="vertical">
+
+      <TextView
+        style="@style/TextAppearance.Material3.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/create_new_headline"
+        android:textColor="?attr/colorOnSurface" />
+
+      <TextView
+        style="@style/TextAppearance.Material3.BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_new_supporting_text"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <Button
+      android:id="@+id/openButton"
+      style="@style/Widget.Material3.Button.TextButton.Icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/open_button_label"
+      app:icon="@drawable/ic_open_in_new_24px"
+      app:iconGravity="textEnd" />
+  </LinearLayout>
+
+  <!-- top: 0dp, bottom: 4dp, space: 12dp = 16dp  -->
+  <Space
+    android:layout_width="wrap_content"
+    android:layout_height="12dp" />
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp">
+
+    <Button
+      android:id="@+id/listButton"
+      style="@style/Widget.Material3.Button.Icon"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/list_button_label"
+      app:icon="@drawable/ic_checklist_24px"
+      app:iconGravity="textStart" />
+
+    <!-- top: 4dp, bottom: 4dp, space: 8dp = 16dp  -->
+    <!--    <Space-->
+    <!--      android:layout_width="wrap_content"-->
+    <!--      android:layout_height="8dp" />-->
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+      <Button
+        android:id="@+id/imageButton"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/image_button_label"
+        app:icon="@drawable/ic_image_24px"
+        app:iconGravity="textStart" />
+
+
+      <Space
+        android:layout_width="8dp"
+        android:layout_height="wrap_content" />
+
+      <Button
+        android:id="@+id/textButton"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/text_button_label"
+        app:icon="@drawable/ic_text_fields_24px"
+        app:iconGravity="textStart" />
+    </LinearLayout>
+
+    <!-- top: 4dp, bottom: 4dp, space: 8dp = 16dp  -->
+    <!--    <Space-->
+    <!--      android:layout_width="wrap_content"-->
+    <!--      android:layout_height="4dp" />-->
+
+    <Button
+      android:id="@+id/textButton2"
+      style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/text_button_label"
+      app:icon="@drawable/ic_text_fields_24px"
+      app:iconGravity="textStart" />
+
+  </LinearLayout>
+
+  <Button
+    android:id="@+id/imageActionButton"
+    style="?attr/materialIconButtonFilledStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    android:minWidth="96dp"
+    android:width="96dp"
+    android:maxWidth="96dp"
+
+    android:minHeight="96dp"
+    android:height="96dp"
+    android:maxHeight="96dp"
+
+    app:iconSize="24dp"
+    android:contentDescription="@string/image_button_label"
+    app:iconGravity="textStart"
+    app:icon="@drawable/ic_image_24px" />
+  <TextView
+    android:id="@+id/tempText"
+    style="@style/TextAppearance.Material3.BodySmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="24dp"
+    android:layout_marginHorizontal="24dp"
+    android:text="@string/image_button_label"
+    android:textIsSelectable="true"
+    android:textColor="?attr/colorOnSurface" />
+
+  <!-- top: 4dp, bottom: 0dp, space: 16dp = 24dp  -->
+<!--  <Space-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="16dp" />-->
+
+<!--  <LinearLayout-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:gravity="end"-->
+<!--    android:orientation="horizontal"-->
+<!--    android:paddingHorizontal="24dp"></LinearLayout>-->
+
+</LinearLayout>

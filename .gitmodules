@@ -1,0 +1,3 @@
+[submodule "pkgs/gemma_ffi/src/gemma.cpp"]
+	path = pkgs/gemma_ffi/src/gemma.cpp
+	url = https://github.com/google/gemma.cpp.git

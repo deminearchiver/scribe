@@ -7,6 +7,5 @@ workspace:
   - pkgs/material
   - pkgs/painting
   - pkgs/services
-  - pkgs/gemma_ffi
 dev_dependencies:
   lints: ^5.1.1

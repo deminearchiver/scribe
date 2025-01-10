@@ -21,5 +21,27 @@
       "type": "dart",
       "flutterMode": "release"
     },
+
+    // gemma_ffi
+    {
+      "name": "gemma_ffi (debug mode)",
+      "cwd": "pkgs/gemma_ffi/example",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "gemma_ffi (profile mode)",
+      "cwd": "pkgs/gemma_ffi/example",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "gemma_ffi (release mode)",
+      "cwd": "pkgs/gemma_ffi/example",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
   ]
 }

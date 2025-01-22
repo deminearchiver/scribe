@@ -31,6 +31,19 @@ class MCommand extends Command {
   String? get parameters => "$x $y";
 }
 
+class LCommand extends Command {
+  const LCommand(this.x, this.y) : super._();
+
+  final double x;
+  final double y;
+
+  @override
+  String get tag => "L";
+
+  @override
+  String? get parameters => "$x $y";
+}
+
 class CCommand extends Command {
   const CCommand(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3)
     : super._();
@@ -74,6 +87,12 @@ class DebugPath extends ProxyPath {
   void moveTo(double x, double y) {
     commands.add(MCommand(x, y));
     super.moveTo(x, y);
+  }
+
+  @override
+  void lineTo(double x, double y) {
+    commands.add(LCommand(x, y));
+    super.lineTo(x, y);
   }
 
   @override

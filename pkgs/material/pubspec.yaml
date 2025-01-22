@@ -9,7 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  painting: ^0.0.1
+  widgets:
+  rendering:
+  painting:
   material_symbols_icons: ^4.2801.0
   collection: ^1.19.0
   vector_math: ^2.1.4

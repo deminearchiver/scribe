@@ -1,19 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:follow_the_leader/follow_the_leader.dart';
 import 'package:painting/painting.dart';
 import 'package:scribe/debug.dart';
-import 'package:scribe/editor/audio.dart';
-import 'package:scribe/editor/iframe.dart';
-import 'package:scribe/editor/video.dart';
+import 'package:scribe/l10n/l10n.dart';
+import 'package:scribe/onboarding.dart';
+// import 'package:scribe/editor/audio.dart';
+// import 'package:scribe/editor/iframe.dart';
+// import 'package:scribe/editor/video.dart';
 import 'package:scribe/services.dart';
+import 'package:scribe/super_editor_video.dart';
 import 'package:scribe/theme.dart';
 import 'package:material/material.dart';
 import 'package:scribe/views/auth/auth.dart';
 import 'package:scribe/widgets/add_close.dart';
 import 'package:scribe/widgets/fab.dart';
 import 'package:super_editor/super_editor.dart';
-import 'editor/image.dart';
+import 'package:super_editor_markdown/super_editor_markdown.dart';
+import 'package:widgets/widgets.dart';
+// import 'editor/image.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -34,11 +40,14 @@ class _AppState extends State<App> {
     // });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      supportedLocales: LocalizationsRegistry.supportedLocales,
+      localizationsDelegates: LocalizationsRegistry.localizationsDelegates,
+
       themeMode: ThemeMode.system,
       theme: AppTheme.custom(brightness: Brightness.light),
       darkTheme: AppTheme.custom(
         brightness: Brightness.dark,
-        // seedColor: Color(0xFFFFDE3F),
+        seedColor: Color(0xFFFFDE3F),
       ),
       builder: (context, child) {
         return IconTheme.merge(
@@ -52,7 +61,8 @@ class _AppState extends State<App> {
           child: child!,
         );
       },
-      home: const HomeView(),
+      // home: const HomeView(),
+      home: const OnboardingFlow(),
     );
   }
 }
@@ -168,6 +178,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final GlobalKey _viewportKey = GlobalKey();
+
   late final Editor _editor;
   late final MutableDocument _document;
   late final MutableDocumentComposer _composer;
@@ -177,6 +189,10 @@ class _HomeViewState extends State<HomeView> {
 
   SuperEditorAndroidControlsController? _androidControlsController;
   SuperEditorIosControlsController? _iosControlsController;
+
+  final _selectionLayerLinks = SelectionLayerLinks();
+
+  final _overlayPortalController = OverlayPortalController();
 
   @override
   void initState() {
@@ -193,7 +209,7 @@ class _HomeViewState extends State<HomeView> {
         //   uri: Uri.https("pauljadam.com", "/demos/html5-input-types.html"),
         // ),
         // AudioNode(id: Editor.createNodeId()),
-        // VideoNode(id: Editor.createNodeId()),
+        VideoNode(id: Editor.createNodeId()),
         // ImageNode(
         //   id: "1",
         //   imageUrl: 'https://i.ibb.co/5nvRdx1/flutter-horizon.png',
@@ -389,184 +405,406 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildEditor(BuildContext context) {
     final theme = Theme.of(context);
-    return SuperEditorAndroidControlsScope(
-      controller: _androidControlsController!,
-      child: SuperEditorIosControlsScope(
-        controller: _iosControlsController!,
-        child: SuperEditor(
-          editor: _editor,
-
-          componentBuilders: [
-            const CustomImageComponentBuilder(),
-            const VideoComponentBuilder(),
-            const AudioComponentBuilder(),
-            const BlockquoteComponentBuilder(),
-            const ParagraphComponentBuilder(),
-            const ListItemComponentBuilder(),
-            const HorizontalRuleComponentBuilder(),
-            IFrameComponentBuilder(),
-            TaskComponentBuilder(_editor),
-          ],
-          stylesheet: defaultStylesheet.copyWith(
-            documentPadding: EdgeInsets.symmetric(horizontal: 16),
-            rules: [
-              StyleRule(BlockSelector.all, (doc, docNode) {
-                return {
-                  Styles.textStyle: theme.textTheme.bodyLarge!.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                };
-              }),
-              StyleRule(
-                const BlockSelector("header1"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.headlineMedium,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("header2"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.headlineSmall,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("header3"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.titleLarge,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("header4"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.titleMedium,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("header5"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.titleSmall,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("header6"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.labelMedium,
-                },
-              ),
-              StyleRule(
-                const BlockSelector("paragraph"),
-                (document, node) => {
-                  Styles.textStyle: theme.textTheme.bodyLarge,
-                },
-              ),
-              StyleRule(
-                BlockSelector.all,
-                (document, node) => {
-                  Styles.textStyle: TextStyle(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                },
-              ),
-              StyleRule(
-                const BlockSelector("image"),
-                (_, _) => {
-                  Styles.borderRadius: const BorderRadius.all(Radii.extraLarge),
-                },
-              ),
+    return KeyedSubtree(
+      child: SuperEditorAndroidControlsScope(
+        controller: _androidControlsController!,
+        child: SuperEditorIosControlsScope(
+          controller: _iosControlsController!,
+          child: SuperEditor(
+            editor: _editor,
+            componentBuilders: [
+              // const CustomImageComponentBuilder(),
+              // const VideoComponentBuilder(),
+              // const AudioComponentBuilder(),
+              const BlockquoteComponentBuilder(),
+              const ParagraphComponentBuilder(),
+              const ListItemComponentBuilder(),
+              const HorizontalRuleComponentBuilder(),
+              // IFrameComponentBuilder(),
+              TaskComponentBuilder(_editor),
+              const ImageComponentBuilder(),
+              const VideoComponentBuilder(),
             ],
-            selectedTextColorStrategy:
-                ({
-                  required originalTextColor,
-                  required selectionHighlightColor,
-                }) => originalTextColor,
-          ),
-
-          documentOverlayBuilders: [
-            if (defaultTargetPlatform == TargetPlatform.android) ...const [
-              SuperEditorAndroidToolbarFocalPointDocumentLayerBuilder(),
-              SuperEditorAndroidHandlesDocumentLayerBuilder(),
-            ],
-            if (defaultTargetPlatform == TargetPlatform.iOS) ...const [
-              SuperEditorIosHandlesDocumentLayerBuilder(),
-              SuperEditorIosToolbarFocalPointDocumentLayerBuilder(),
-            ],
-            DefaultCaretOverlayBuilder(
-              caretStyle: const CaretStyle().copyWith(
-                color: theme.colorScheme.primary,
-              ),
+            stylesheet: defaultStylesheet.copyWith(
+              documentPadding: EdgeInsets.symmetric(horizontal: 16),
+              rules: [
+                StyleRule(BlockSelector.all, (doc, docNode) {
+                  return {
+                    Styles.textStyle: theme.textTheme.bodyLarge!.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  };
+                }),
+                StyleRule(
+                  const BlockSelector("header1"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.headlineMedium,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("header2"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.headlineSmall,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("header3"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.titleLarge,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("header4"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.titleMedium,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("header5"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.titleSmall,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("header6"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.labelMedium,
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("paragraph"),
+                  (document, node) => {
+                    Styles.textStyle: theme.textTheme.bodyLarge,
+                  },
+                ),
+                StyleRule(
+                  BlockSelector.all,
+                  (document, node) => {
+                    Styles.textStyle: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  },
+                ),
+                StyleRule(
+                  const BlockSelector("image"),
+                  (_, _) => {
+                    Styles.borderRadius: const BorderRadius.all(
+                      Radii.extraLarge,
+                    ),
+                  },
+                ),
+              ],
+              selectedTextColorStrategy:
+                  ({
+                    required originalTextColor,
+                    required selectionHighlightColor,
+                  }) => originalTextColor,
             ),
-          ],
-          selectionStyle: SelectionStyles(
-            selectionColor: theme.colorScheme.primary.withValues(alpha: 0.4),
+
+            documentOverlayBuilders: [
+              if (defaultTargetPlatform == TargetPlatform.android) ...const [
+                SuperEditorAndroidToolbarFocalPointDocumentLayerBuilder(),
+                SuperEditorAndroidHandlesDocumentLayerBuilder(),
+              ],
+              if (defaultTargetPlatform == TargetPlatform.iOS) ...const [
+                SuperEditorIosHandlesDocumentLayerBuilder(),
+                SuperEditorIosToolbarFocalPointDocumentLayerBuilder(),
+              ],
+              DefaultCaretOverlayBuilder(
+                caretStyle: const CaretStyle().copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+            selectionLayerLinks: _selectionLayerLinks,
+            selectionStyle: SelectionStyles(
+              selectionColor: theme.colorScheme.primary.withValues(alpha: 0.4),
+            ),
+            plugins: {MarkdownInlineUpstreamSyntaxPlugin()},
           ),
         ),
       ),
     );
   }
 
+  Widget _buildToolbar(BuildContext context) {
+    return Toolbar(
+      anchor: _selectionLayerLinks.expandedSelectionBoundsLink,
+      editorViewportKey: _viewportKey,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverTopAppBar.large(
-            pinned: true,
-            title: Builder(
-              builder:
-                  (context) => TextField(
-                    style: DefaultTextStyle.of(context).style,
-                    decoration: InputDecoration.collapsed(
-                      border: InputBorder.none,
-                      hintText: "Title",
+    return OverlayPortal(
+      controller: _overlayPortalController,
+      overlayChildBuilder: _buildToolbar,
+      child: Scaffold(
+        key: _viewportKey,
+        body: CustomScrollView(
+          slivers: [
+            SliverTopAppBar.large(
+              pinned: true,
+              title: Builder(
+                builder:
+                    (context) => TextField(
+                      style: DefaultTextStyle.of(context).style,
+                      decoration: InputDecoration.collapsed(
+                        border: InputBorder.none,
+                        hintText: "Title",
+                      ),
                     ),
-                  ),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () => _overlayPortalController.toggle(),
+                  icon: const Icon(Symbols.visibility),
+                ),
+              ],
             ),
-            actions: [],
-          ),
-          _buildEditor(context),
-        ],
-      ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      floatingActionButton: ExpandableFloatingActionButton<String>(
-        size: FloatingActionButtonSize.regular,
-        collapsedStyle: FloatingActionButton.styleFrom(
-          context: context,
-          variant: FloatingActionButtonVariant.primary,
-        ).copyWith(
-          shadowColor: const WidgetStatePropertyAll(Colors.transparent),
-        ),
-        expandedStyle: FloatingActionButton.styleFrom(
-          context: context,
-          variant: FloatingActionButtonVariant.secondary,
-        ),
-        actions: const [
-          FloatingActionButtonAction(
-            value: "image",
-            icon: Icon(Symbols.image),
-            label: Text("Image"),
-          ),
-          FloatingActionButtonAction(
-            value: "text",
-            icon: Icon(Symbols.text_fields),
-            label: Text("Text"),
-          ),
-          FloatingActionButtonAction(
-            value: "list",
-            icon: Icon(Symbols.checklist),
-            label: Text("List"),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            IconButton(onPressed: () {}, icon: const Icon(Symbols.image)),
-            const Spacer(),
+            // _buildEditor(context),
+            _buildEditor(context),
+            SliverToBoxAdapter(
+              child: Center(
+                child: FloatingToolbar(
+                  variant: FloatingToolbarVariant.standard,
+                  direction: Axis.horizontal,
+                  actions: [
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: true,
+                      icon: const Icon(Symbols.format_bold),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: false,
+                      icon: const Icon(Symbols.format_italic),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: false,
+                      icon: const Icon(Symbols.format_underlined),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: false,
+                      icon: const Icon(Symbols.format_color_text_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: false,
+                      icon: const Icon(Symbols.format_color_fill_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      isSelected: true,
+                      icon: const Icon(Symbols.format_h1),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
+        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+        floatingActionButton: ExpandableFloatingActionButton<String>(
+          size: FloatingActionButtonSize.regular,
+          collapsedStyle: FloatingActionButton.styleFrom(
+            context: context,
+            variant: FloatingActionButtonVariant.primary,
+          ).copyWith(
+            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+          ),
+          expandedStyle: FloatingActionButton.styleFrom(
+            context: context,
+            variant: FloatingActionButtonVariant.secondary,
+          ),
+          actions: const [
+            FloatingActionButtonAction(
+              value: "image",
+              icon: Icon(Symbols.image),
+              label: Text("Image"),
+            ),
+            FloatingActionButtonAction(
+              value: "text",
+              icon: Icon(Symbols.text_fields),
+              label: Text("Text"),
+            ),
+            FloatingActionButtonAction(
+              value: "list",
+              icon: Icon(Symbols.checklist),
+              label: Text("List"),
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            children: [
+              IconButton(onPressed: () {}, icon: const Icon(Symbols.image)),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class ToolbarAligner implements FollowerAligner {
+  const ToolbarAligner([GlobalKey? boundsKey]) : _boundsKey = boundsKey;
+
+  final GlobalKey? _boundsKey;
+
+  static const double _popoverToolbarMinimumDistanceFromEdge = 16;
+
+  @override
+  FollowerAlignment align(Rect globalLeaderRect, Size followerSize) {
+    final boundsBox =
+        _boundsKey?.currentContext?.findRenderObject() as RenderBox?;
+    final bounds =
+        boundsBox != null
+            ? Rect.fromPoints(
+              boundsBox.localToGlobal(Offset.zero),
+              boundsBox.localToGlobal(boundsBox.size.bottomRight(Offset.zero)),
+            )
+            : Rect.largest;
+
+    late FollowerAlignment alignment;
+    if (globalLeaderRect.top -
+            followerSize.height -
+            _popoverToolbarMinimumDistanceFromEdge <
+        bounds.top) {
+      // The follower hit the minimum distance. Invert the follower position.
+      alignment = const FollowerAlignment(
+        leaderAnchor: Alignment.bottomCenter,
+        followerAnchor: Alignment.topCenter,
+        followerOffset: Offset(0, 20),
+      );
+    } else {
+      // There's enough room to display toolbar above content. That's our desired
+      // default position, so put the toolbar on top.
+      alignment = const FollowerAlignment(
+        leaderAnchor: Alignment.topCenter,
+        followerAnchor: Alignment.bottomCenter,
+        followerOffset: Offset(0, -20),
+      );
+    }
+
+    return alignment;
+  }
+}
+
+class Toolbar extends StatefulWidget {
+  const Toolbar({
+    super.key,
+    required this.anchor,
+    required this.editorViewportKey,
+  });
+
+  final LeaderLink anchor;
+  final GlobalKey editorViewportKey;
+
+  @override
+  State<Toolbar> createState() => _ToolbarState();
+}
+
+class _ToolbarState extends State<Toolbar> {
+  late FollowerAligner _aligner;
+  late WidgetFollowerBoundary _boundary;
+  @override
+  void initState() {
+    super.initState();
+    _aligner = ToolbarAligner(widget.editorViewportKey);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _boundary = WidgetFollowerBoundary(
+      boundaryKey: widget.editorViewportKey,
+      devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant Toolbar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.editorViewportKey != oldWidget.editorViewportKey) {
+      _aligner = ToolbarAligner(widget.editorViewportKey);
+      _boundary = WidgetFollowerBoundary(
+        boundaryKey: widget.editorViewportKey,
+        devicePixelRatio: _boundary.devicePixelRatio,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  Widget _buildToolbar(BuildContext context) {
+    return FloatingToolbar.horizontal(
+      actions: [
+        IconButton(
+          onPressed: () {},
+          isSelected: true,
+          icon: const Icon(Symbols.format_bold),
+        ),
+        IconButton(
+          onPressed: () {},
+          isSelected: false,
+          icon: const Icon(Symbols.format_italic),
+        ),
+        IconButton(
+          onPressed: () {},
+          isSelected: false,
+          icon: const Icon(Symbols.format_underlined),
+        ),
+        IconButton(
+          onPressed: () {},
+          isSelected: false,
+          icon: const Icon(Symbols.format_color_text_rounded),
+        ),
+        IconButton(
+          onPressed: () {},
+          isSelected: false,
+          icon: const Icon(Symbols.format_color_fill_rounded),
+        ),
+        IconButton(
+          onPressed: () {},
+          isSelected: true,
+          icon: const Icon(Symbols.format_h1),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFollower(BuildContext context) {
+    final anchor = widget.anchor;
+    return BuildInOrder(
+      children: [
+        FollowerFadeOutBeyondBoundary(
+          link: anchor,
+          boundary: _boundary,
+          child: Follower.withAligner(
+            showDebugPaint: true,
+            link: anchor,
+            aligner: _aligner,
+            boundary: _boundary,
+            showWhenUnlinked: false,
+            child: _buildToolbar(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildFollower(context);
   }
 }

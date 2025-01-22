@@ -49,7 +49,7 @@ class Repository extends OfflineFirstWithSupabaseRepository {
         databaseFactory: databaseFactoryFfi,
         modelDictionary: sqliteModelDictionary,
       ),
-      migrations: migrations,
+      migrations: {},
       offlineRequestQueue: queue,
       // Specify class types that should be cached in memory
       memoryCacheProvider: MemoryCacheProvider(),

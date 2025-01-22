@@ -331,7 +331,6 @@ class _VideoControlsState extends State<_VideoControls> {
     for (final subscription in _subscriptions) {
       subscription.cancel();
     }
-    _player.dispose();
     super.dispose();
   }
 

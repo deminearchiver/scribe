@@ -19,18 +19,18 @@ import 'package:brick_offline_first/brick_offline_first.dart' show RuntimeOfflin
 // ignore: unused_import, unused_shown_name
 import 'package:sqflite_common/sqlite_api.dart' show DatabaseExecutor;
 
-import '../brick/models/user.model.dart';
+import '../brick/models/node.model.dart';
 
-part 'adapters/user_adapter.g.dart';
+part 'adapters/node_adapter.g.dart';
 
 /// Supabase mappings should only be used when initializing a [SupabaseProvider]
 final Map<Type, SupabaseAdapter<SupabaseModel>> supabaseMappings = {
-  User: UserAdapter()
+  Node: NodeAdapter()
 };
 final supabaseModelDictionary = SupabaseModelDictionary(supabaseMappings);
 
 /// Sqlite mappings should only be used when initializing a [SqliteProvider]
 final Map<Type, SqliteAdapter<SqliteModel>> sqliteMappings = {
-  User: UserAdapter()
+  Node: NodeAdapter()
 };
 final sqliteModelDictionary = SqliteModelDictionary(sqliteMappings);

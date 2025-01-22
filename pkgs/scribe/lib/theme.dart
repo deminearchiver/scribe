@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:material/material.dart';
+import 'package:widgets/widgets.dart';
 
 class AppTheme {
   static const _baselineSeedColor = Color(0xFF6750A4);

@@ -1,1 +1,0 @@
-F:\Victor\GitHub\Repositories\project10\pkgs\scribe\build\app\intermediates\cxx\RelWithDebInfo\6l532bz1\obj\arm64-v8a

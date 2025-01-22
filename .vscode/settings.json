@@ -1,4 +1,5 @@
 {
   "java.configuration.updateBuildConfiguration": "disabled",
   "dart.flutterSdkPath": ".fvm/versions/master",
+  "cmake.configureOnOpen": false,
 }

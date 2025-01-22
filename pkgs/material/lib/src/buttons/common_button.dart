@@ -191,7 +191,7 @@ class _ButtonWithIconChild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wrappedIcon = IconTheme.merge(
-      data: const IconThemeData(size: 18, opticalSize: 18),
+      data: const IconThemeData(size: 18, opticalSize: 18, fill: 1),
       child: icon,
     );
     return Row(

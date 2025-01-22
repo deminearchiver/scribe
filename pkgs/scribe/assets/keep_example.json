@@ -1,0 +1,55 @@
+{
+  "color": "DEFAULT",
+  "isTrashed": false,
+  "isPinned": true,
+  "isArchived": false,
+  "textContent": "https://github.com/deminearchiver/scribe\n\n\n\nProject structure\n\n\u2022 pubspec.yaml\n\u2022 pkgs/\n    \u2022 gemma\n    \u2022 gemma_ffi\n    \u2022 painting\n    \u2022 services\n    \u2022 material\n    \u2022 scribe\n\nPackages\nmaterial\npainting\n\u2022 CroppedBorder\n\u2022 ",
+  "title": "Scribe",
+  "userEditedTimestampUsec": 1736932000169000,
+  "createdTimestampUsec": 1734253294929000,
+  "textContentHtml": "<p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">https://github.com/deminearchiver/scribe</span></p><br /><br /><br /><h1 dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:24.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:700;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">Project structure</span></h1><br /><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">\u2022 pubspec.yaml</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">\u2022 pkgs/</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 gemma</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 gemma_ffi</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 painting</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 services</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 material</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">&nbsp;&nbsp;&nbsp;&nbsp;\u2022 scribe</span></p><br /><h1 dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:24.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:700;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">Packages</span></h1><h2 dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:20.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">material</span></h2><h2 dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:20.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">painting</span></h2><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">\u2022 CroppedBorder</span></p><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0.0pt;margin-bottom:0.0pt;\"><span style=\"font-size:16.0pt;font-family:'Google Sans';color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;\">\u2022 </span></p>",
+  "labels": [
+    {
+      "name": "Scribe"
+    },
+    {
+      "name": "Framework → Flutter"
+    },
+    {
+      "name": "Supabase"
+    },
+    {
+      "name": "Google APIs"
+    },
+    {
+      "name": "Material Design 3"
+    },
+    {
+      "name": "Platform → Android"
+    },
+    {
+      "name": "Platform → Windows"
+    },
+    {
+      "name": "Platform → Mobile"
+    },
+    {
+      "name": "Platform → Desktop"
+    },
+    {
+      "name": "Platform → macOS"
+    },
+    {
+      "name": "Platform → iOS"
+    },
+    {
+      "name": "Platform → Linux"
+    },
+    {
+      "name": "Accessibility"
+    },
+    {
+      "name": "Language → Dart"
+    }
+  ]
+}

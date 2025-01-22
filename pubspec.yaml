@@ -4,8 +4,12 @@ environment:
   sdk: ^3.7.0-266.0.dev
 workspace:
   - pkgs/scribe
+  - pkgs/rendering
   - pkgs/material
   - pkgs/painting
   - pkgs/services
+  - pkgs/widgets
 dev_dependencies:
   lints: ^5.1.1
+dependencies:
+  flutter_staggered_grid_view: ^0.7.0

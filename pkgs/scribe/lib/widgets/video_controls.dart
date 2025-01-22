@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/scheduler.dart';
 import 'package:material/material.dart';
+import 'package:scribe/widgets/play_pause.dart';
 
 class PlayPauseButton extends StatefulWidget {
   const PlayPauseButton({
@@ -75,7 +76,13 @@ class _PlayPauseButtonState extends State<PlayPauseButton> {
               : theme.colorScheme.onPrimary,
       onPressed: widget.onPressed,
       shape: active ? Shapes.full : Shapes.large,
-      child: Icon(widget.playing ? Symbols.pause : Symbols.play_arrow),
+      // child: Icon(widget.playing ? Symbols.pause : Symbols.play_arrow),
+      child: ImplicitPlayPause(
+        duration: Durations.medium4,
+        curve: Easing.standard,
+        state:
+            widget.playing ? PlayPauseState.pause : PlayPauseState.play_arrow,
+      ),
     );
   }
 }
@@ -151,6 +158,7 @@ class _PlayPauseButtonContainerState
 
   @override
   Widget build(BuildContext context) {
+    final stateTheme = StateTheme.of(context);
     final backgroundColor =
         _backgroundColorTween?.evaluate(animation) ?? widget.backgroundColor;
     final foregroundColor =
@@ -180,7 +188,10 @@ class _PlayPauseButtonContainerState
               statesController: widget.statesController,
               onTap: widget.onPressed,
               mouseCursor: SystemMouseCursors.click,
-              overlayColor: WidgetStateLayerColor(overlayColor),
+              overlayColor: WidgetStateLayerColor(
+                overlayColor,
+                opacity: stateTheme.stateLayerOpacity,
+              ),
               child: Center(
                 child: IconTheme.merge(
                   data: IconThemeData(
@@ -197,6 +208,44 @@ class _PlayPauseButtonContainerState
         ),
       ),
     );
+  }
+}
+
+enum PlayPauseState { play_arrow, pause }
+
+class ImplicitPlayPause extends ImplicitlyAnimatedWidget {
+  const ImplicitPlayPause({
+    super.key,
+    required super.duration,
+    super.curve = Easing.linear,
+    super.onEnd,
+    required this.state,
+  });
+
+  final PlayPauseState state;
+
+  @override
+  ImplicitlyAnimatedWidgetState<ImplicitPlayPause> createState() => _S();
+}
+
+class _S extends AnimatedWidgetBaseState<ImplicitPlayPause> {
+  Tween<double>? _iconTween;
+
+  double get _progress => switch (widget.state) {
+    PlayPauseState.play_arrow => 0.0,
+    PlayPauseState.pause => 1.0,
+  };
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _iconTween =
+        visitor(_iconTween, _progress, (value) => Tween<double>(begin: value))
+            as Tween<double>?;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlayPause(progress: _iconTween?.evaluate(animation) ?? _progress);
   }
 }
 

@@ -38,8 +38,6 @@ dependencies:
   super_editor: ^0.3.0-dev.12
   super_editor_markdown: ^0.1.7
 
-  flutter_inappwebview: ^6.2.0-beta.2
-
   # Media player
   media_kit: ^1.1.11
   media_kit_libs_video: ^1.0.5

@@ -44,7 +44,7 @@ void main() async {
     supabaseUrl: supabaseUrl,
     supabaseAnonKey: supabaseAnonKey,
   );
-  await Repository.instance.initialize();
+  await Repository().initialize();
 
   // Media player
 

@@ -5,15 +5,17 @@ import 'package:brick_sqlite/memory_cache_provider.dart';
 // This hide is for Brick's @Supabase annotation; in most cases,
 // supabase_flutter **will not** be imported in application code.
 import 'package:brick_supabase/brick_supabase.dart' hide Supabase;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi;
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi;
+import 'package:sqflite/sqflite.dart' show databaseFactory;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'brick.g.dart';
 import 'db/schema.g.dart';
 
 class Repository extends OfflineFirstWithSupabaseRepository {
-  static late Repository? _instance;
-  static Repository get instance => _instance!;
+  static late Repository _instance;
+
+  factory Repository() => _instance;
 
   Repository._({
     required super.supabaseProvider,
@@ -28,7 +30,8 @@ class Repository extends OfflineFirstWithSupabaseRepository {
     required String supabaseAnonKey,
   }) async {
     final (client, queue) = OfflineFirstWithSupabaseRepository.clientQueue(
-      databaseFactory: databaseFactoryFfi,
+      databaseFactory: databaseFactory,
+      // databaseFactory: databaseFactoryFfi,
     );
 
     await Supabase.initialize(
@@ -46,7 +49,8 @@ class Repository extends OfflineFirstWithSupabaseRepository {
       supabaseProvider: provider,
       sqliteProvider: SqliteProvider(
         "supabase.sqlite",
-        databaseFactory: databaseFactoryFfi,
+        databaseFactory: databaseFactory,
+        // databaseFactory: databaseFactoryFfi,
         modelDictionary: sqliteModelDictionary,
       ),
       migrations: {},

@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:collection/collection.dart';
@@ -11,9 +13,12 @@ import 'package:material/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scribe/accordion.dart';
 import 'package:scribe/app_icons.dart';
+import 'package:scribe/gen/assets.gen.dart';
 import 'package:scribe/keep.dart';
 import 'package:scribe/misc.dart';
 import 'package:archive/archive.dart';
+import 'package:scribe/onboarding_auth.dart';
+import 'package:simple_icons/simple_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardingFlow extends StatefulWidget {
@@ -315,7 +320,6 @@ class _OnboardingMigrateState extends State<OnboardingMigrate> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final stateTheme = StateTheme.of(context);
-    debugPrint("$_expanded");
     return Scaffold(
       body: NotificationListener<ScrollMetricsNotification>(
         onNotification: _updateScrolledUnder,
@@ -574,7 +578,16 @@ class _OnboardingMigrateState extends State<OnboardingMigrate> {
                       //     ),
 
                       //   const Gap(8),
-                      TextButton(onPressed: () {}, label: Text("Skip")),
+                      TextButton(
+                        onPressed:
+                            () => Navigator.push(
+                              context,
+                              MaterialRoute(
+                                builder: (context) => OnboardingAuth(),
+                              ),
+                            ),
+                        label: Text("Skip"),
+                      ),
                     ],
                   ),
                 ],
@@ -1090,64 +1103,64 @@ class _KeepNoteImportState extends State<KeepNoteImport> {
               //     ),
               //   ),
               // ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Accordion<int>(
-                  onExpandedChanged: (value) {
-                    final difference = value.difference({_expanded});
-                    setState(() => _expanded = difference.singleOrNull);
-                  },
-                  expanded: {if (_expanded != null) _expanded!},
-                  items: [
-                    AccordionItem(
-                      value: 0,
-                      leading: Icon(Symbols.folder_zip),
-                      headline: Text("Archive"),
-                      supportingText: Text(
-                        "Use a structured Google Takeout archive",
-                      ),
-                      child: Text("Expanded"),
-                    ),
-                    AccordionItem(
-                      value: 1,
-                      leading: Icon(Symbols.folder),
-                      headline: Text("Folder"),
-                      supportingText: Text(
-                        "Use Google Takeout \"Keep\" subfolder",
-                      ),
-                      child: Flex.vertical(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ListTile(
-                            leading: SizedBox(
-                              width: 24,
-                              child: ExpressiveListBulletIcon(
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                            title: Text("AAAAA"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            child: FilledButton(
-                              onPressed: () {},
-                              label: Text("Choose a folder"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    AccordionItem(
-                      value: 2,
-                      headline: Text("Choose a folder"),
-                      child: Text("Expanded"),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 16),
+              //   child: Accordion<int>(
+              //     onExpandedChanged: (value) {
+              //       final difference = value.difference({_expanded});
+              //       setState(() => _expanded = difference.singleOrNull);
+              //     },
+              //     expanded: {if (_expanded != null) _expanded!},
+              //     items: [
+              //       AccordionItem.secondary(
+              //         value: 0,
+              //         leading: Icon(Symbols.folder_zip),
+              //         headline: Text("Archive"),
+              //         supportingText: Text(
+              //           "Use a structured Google Takeout archive",
+              //         ),
+              //         child: Text("Expanded"),
+              //       ),
+              //       AccordionItem.secondary(
+              //         value: 1,
+              //         leading: Icon(Symbols.folder),
+              //         headline: Text("Folder"),
+              //         supportingText: Text(
+              //           "Use Google Takeout \"Keep\" subfolder",
+              //         ),
+              //         child: Flex.vertical(
+              //           crossAxisAlignment: CrossAxisAlignment.stretch,
+              //           children: [
+              //             ListTile(
+              //               leading: SizedBox(
+              //                 width: 24,
+              //                 child: ExpressiveListBulletIcon(
+              //                   color: theme.colorScheme.primary,
+              //                 ),
+              //               ),
+              //               title: Text("AAAAA"),
+              //             ),
+              //             Padding(
+              //               padding: const EdgeInsets.symmetric(
+              //                 horizontal: 16,
+              //                 vertical: 12,
+              //               ),
+              //               child: FilledButton(
+              //                 onPressed: () {},
+              //                 label: Text("Choose a folder"),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       AccordionItem.secondary(
+              //         value: 2,
+              //         headline: Text("Choose a folder"),
+              //         child: Text("Expanded"),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               ListTile(
                 onTap:
                     () => setState(() => _expanded = _expanded != 0 ? 0 : null),

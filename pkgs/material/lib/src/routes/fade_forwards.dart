@@ -1,3 +1,3 @@
 import 'package:material/material.dart';
 
-PredictiveBackPageTransitionsBuilder? a;
+FadeForwardsPageTransitionsBuilder? a;

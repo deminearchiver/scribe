@@ -79,7 +79,7 @@ export 'package:flutter/src/material/floating_action_button_location.dart';
 export 'package:flutter/src/material/floating_action_button_theme.dart';
 export 'package:flutter/src/material/grid_tile.dart';
 export 'package:flutter/src/material/grid_tile_bar.dart';
-export 'package:flutter/src/material/icon_button.dart';
+export 'package:flutter/src/material/icon_button.dart' hide IconButton;
 export 'package:flutter/src/material/icon_button_theme.dart';
 export 'package:flutter/src/material/icons.dart';
 export 'package:flutter/src/material/ink_decoration.dart';
@@ -223,7 +223,6 @@ export 'src/linear_progress_indicator.dart';
 export 'src/circular_progress_indicator.dart';
 export 'src/slider.dart';
 
-export 'src/buttons/common_button.dart';
 export 'src/buttons/button_group.dart';
 export 'src/buttons/split_button.dart';
 export 'src/floating_action_button/fab.dart';
@@ -246,3 +245,8 @@ export 'src/button_style_tween.dart';
 export 'src/floating_toolbar.dart';
 
 export 'src/focus_ring.dart';
+export 'src/window_size_class.dart';
+
+export 'src/icon_button/icon_button.dart';
+export 'src/buttons/button.dart';
+export 'src/buttons/common_button.dart' hide CommonButton;

@@ -28,18 +28,7 @@ class AppTheme {
     );
   }
 
-  static ThemeData custom({
-    required Brightness brightness,
-    DynamicSchemeVariant variant = DynamicSchemeVariant.tonalSpot,
-    Color? seedColor,
-    double contrastLevel = 0,
-  }) {
-    final colorScheme = getColorScheme(
-      brightness: brightness,
-      variant: variant,
-      seedColor: seedColor,
-      contrastLevel: contrastLevel,
-    );
+  static ThemeData withColorScheme(ColorScheme colorScheme) {
     const buttonStyle = ButtonStyle(
       padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 24)),
     );
@@ -47,6 +36,8 @@ class AppTheme {
     return ThemeData(
       colorScheme: colorScheme,
       platform: TargetPlatform.android,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      visualDensity: VisualDensity.standard,
       splashFactory: splashFactoryFor(platform),
       elevatedButtonTheme: const ElevatedButtonThemeData(style: buttonStyle),
       filledButtonTheme: const FilledButtonThemeData(style: buttonStyle),
@@ -64,6 +55,21 @@ class AppTheme {
       bottomSheetTheme: const BottomSheetThemeData(),
       extensions: const [StateThemeData.standard()],
     );
+  }
+
+  static ThemeData custom({
+    required Brightness brightness,
+    DynamicSchemeVariant variant = DynamicSchemeVariant.tonalSpot,
+    Color? seedColor,
+    double contrastLevel = 0,
+  }) {
+    final colorScheme = getColorScheme(
+      brightness: brightness,
+      variant: variant,
+      seedColor: seedColor,
+      contrastLevel: contrastLevel,
+    );
+    return withColorScheme(colorScheme);
   }
 
   static ThemeData get light => custom(brightness: Brightness.light);

@@ -1208,8 +1208,10 @@ class PopIconButton extends StatelessWidget {
               : const _BackIconButtonHeroTag()),
       child: IconButton(
         onPressed: canPop ? Navigator.of(context).maybePop : null,
-        color: theme.colorScheme.onSurface,
-        icon: Icon(fullscreenDialog ? Symbols.close : Symbols.arrow_back),
+        icon: Icon(
+          fullscreenDialog ? Symbols.close : Symbols.arrow_back,
+          color: theme.colorScheme.onSurface,
+        ),
       ),
     );
   }

@@ -30,7 +30,24 @@ abstract class CommonButton extends StatelessWidget {
     this.iconAlignment = IconAlignment.start,
     this.icon,
     required this.label,
-  }) : assert(icon != null || label != null);
+  }) : assert(icon != null || label != null),
+       child = null;
+
+  const CommonButton.custom({
+    super.key,
+    required this.onPressed,
+    this.onLongPress,
+    this.onHover,
+    this.onFocusChange,
+    this.style,
+    this.focusNode,
+    this.autofocus = false,
+    this.clipBehavior = Clip.none,
+    this.statesController,
+    this.iconAlignment = IconAlignment.start,
+    required this.child,
+  }) : icon = null,
+       label = null;
 
   final VoidCallback? onPressed;
   final VoidCallback? onLongPress;
@@ -48,6 +65,8 @@ abstract class CommonButton extends StatelessWidget {
   final Widget? icon;
 
   final Widget? label;
+
+  final Widget? child;
 
   /// {@macro flutter.material.ButtonStyleButton.iconAlignment}
   final IconAlignment iconAlignment;
@@ -71,37 +90,14 @@ abstract class CommonButton extends StatelessWidget {
     required Widget child,
   });
 
-  Widget _buildChild(BuildContext context) {
-    if (label == null) return _ButtonWithLabelChild(icon: icon!);
-    if (icon != null) {
-      return _ButtonWithIconChild(
-        icon: icon!,
-        label: label!,
-        iconAlignment: iconAlignment,
-      );
-    }
-    return label!;
-  }
-
   ButtonStyle _getButtonStyle(BuildContext context) {
-    final EdgeInsetsGeometry padding =
-        label == null
-            ? const EdgeInsetsDirectional.symmetric(horizontal: 8)
-            : icon != null
-            ? switch (iconAlignment) {
-              IconAlignment.start => const EdgeInsetsDirectional.only(
-                start: _kIconPadding,
-                end: _kLabelPadding,
-              ),
-              IconAlignment.end => const EdgeInsetsDirectional.only(
-                start: _kLabelPadding,
-                end: _kIconPadding,
-              ),
-            }
-            : const EdgeInsetsDirectional.symmetric(horizontal: _kLabelPadding);
     final minimumSize = label == null ? const Size(48, 40) : null;
-    // final defaultStyle = themeStyleOf(context);
     final inheritedStyle = CommonButtonTheme.of(context)?.style;
+    final defaultPadding = _defaultPadding(
+      hasIcon: icon != null,
+      hasLabel: label != null,
+    );
+    final padding = child == null ? defaultPadding : EdgeInsets.zero;
     final newStyle = ButtonStyle(
       padding: WidgetStatePropertyAll(padding),
       minimumSize: WidgetStatePropertyAll(minimumSize),
@@ -112,6 +108,13 @@ abstract class CommonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content =
+        child ??
+        CommonButtonChild(
+          icon: icon,
+          iconAlignment: iconAlignment,
+          label: label,
+        );
     return buildButton(
       context: context,
       onPressed: onPressed,
@@ -123,92 +126,192 @@ abstract class CommonButton extends StatelessWidget {
       autofocus: autofocus,
       clipBehavior: clipBehavior,
       statesController: statesController,
-      child: _buildChild(context),
+      child: child != null ? _CustomButtonChildMarker(child: content) : content,
+    );
+  }
+
+  static EdgeInsetsGeometry _defaultPadding({
+    required bool hasIcon,
+    required bool hasLabel,
+    IconAlignment iconAlignment = IconAlignment.start,
+  }) {
+    if (hasIcon && hasLabel) {
+      return switch (iconAlignment) {
+        IconAlignment.start => const EdgeInsetsDirectional.only(
+          start: _kIconPadding,
+          end: _kLabelPadding,
+        ),
+        IconAlignment.end => const EdgeInsetsDirectional.only(
+          start: _kLabelPadding,
+          end: _kIconPadding,
+        ),
+      };
+    }
+    if (hasIcon) {
+      return const EdgeInsetsDirectional.symmetric(horizontal: 8);
+    }
+    if (hasLabel) {
+      return const EdgeInsetsDirectional.symmetric(horizontal: _kLabelPadding);
+    }
+    return EdgeInsetsDirectional.zero;
+  }
+
+  static _CustomButtonChildMarker? _maybeOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_CustomButtonChildMarker>();
+  }
+
+  static bool _isCustomOf(BuildContext context) {
+    return _maybeOf(context) != null;
+  }
+
+  // static _CustomButtonChildScope _of(BuildContext context) {
+  //   final result = _maybeOf(context);
+  //   assert(result != null);
+  //   return result!;
+  // }
+
+  // static EdgeInsetsGeometry? maybePaddingOf(BuildContext context) {
+  //   return _maybeOf(context)?.padding;
+  // }
+
+  // static EdgeInsetsGeometry paddingOf(BuildContext context) {
+  //   return _of(context).padding;
+  // }
+}
+
+class CommonButtonChild extends StatelessWidget {
+  const CommonButtonChild({
+    super.key,
+    this.icon,
+    this.label,
+    this.iconAlignment = IconAlignment.start,
+  }) : assert((icon != null || label != null));
+
+  final Widget? icon;
+  final Widget? label;
+  final IconAlignment iconAlignment;
+
+  Widget _buildDefaultTextStyle(BuildContext context, Widget child) {
+    return DefaultTextStyle.merge(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      child: child,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (label != null && icon != null) {
+      return _ButtonWithIconAndLabelChild(
+        icon: icon!,
+        iconAlignment: iconAlignment,
+        label: _buildDefaultTextStyle(context, label!),
+      );
+    }
+    if (icon != null) return _ButtonWithIconChild(icon: icon!);
+    return _ButtonWithLabelChild(
+      label: _buildDefaultTextStyle(context, label!),
     );
   }
 }
 
-class _ButtonWithLabelChild extends StatelessWidget {
-  const _ButtonWithLabelChild({super.key, required this.icon});
+class _CustomButtonChildMarker extends InheritedWidget {
+  const _CustomButtonChildMarker({super.key, required super.child});
+
+  @override
+  bool updateShouldNotify(covariant _CustomButtonChildMarker oldWidget) {
+    return false;
+  }
+}
+
+class _ButtonWithIconChild extends StatelessWidget {
+  const _ButtonWithIconChild({super.key, required this.icon});
 
   final Widget icon;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     return IconTheme.merge(
       data: const IconThemeData(size: 24, opticalSize: 24),
       child: icon,
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final isCustom = CommonButton._isCustomOf(context);
+    final child = _buildContent(context);
+    if (isCustom) {
+      return Padding(
+        padding: CommonButton._defaultPadding(hasIcon: true, hasLabel: false),
+        child: child,
+      );
+    }
+    return child;
+  }
 }
 
-// class _ButtonWithIconChild extends StatelessWidget {
-//   const _ButtonWithIconChild({
-//     this.icon,
-//     this.label,
-//     this.iconAlignment = IconAlignment.start,
-//   }): assert(icon != null || label != null);
+class _ButtonWithLabelChild extends StatelessWidget {
+  const _ButtonWithLabelChild({super.key, required this.label});
 
-//   final Widget? icon;
-//   final Widget? label;
-//   final IconAlignment iconAlignment;
+  final Widget label;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final wrappedIcon = IconTheme.merge(
-//       data: const IconThemeData(size: 18, opticalSize: 18),
-//       child: icon,
-//     );
-//     return Row(
-//       mainAxisSize: MainAxisSize.min,
-//       children: switch (iconAlignment) {
-//         IconAlignment.start => [
-//           wrappedIcon,
-//           const SizedBox(width: _kIconLabelGap),
-//           Flexible(child: label),
-//         ],
-//         IconAlignment.end => [
-//           Flexible(child: label),
-//           const SizedBox(width: _kIconLabelGap),
-//           wrappedIcon,
-//         ],
-//       },
-//     );
-//   }
-// }
+  Widget _buildContent(BuildContext context) {
+    return label;
+  }
 
-class _ButtonWithIconChild extends StatelessWidget {
-  const _ButtonWithIconChild({
-    required this.label,
+  @override
+  Widget build(BuildContext context) {
+    final isCustom = CommonButton._isCustomOf(context);
+    final child = _buildContent(context);
+    if (isCustom) {
+      return Padding(
+        padding: CommonButton._defaultPadding(hasIcon: false, hasLabel: true),
+        child: child,
+      );
+    }
+    return child;
+  }
+}
+
+class _ButtonWithIconAndLabelChild extends StatelessWidget {
+  const _ButtonWithIconAndLabelChild({
+    super.key,
     required this.icon,
-    required this.iconAlignment,
+    this.iconAlignment = IconAlignment.start,
+    required this.label,
   });
 
   final Widget icon;
   final Widget label;
   final IconAlignment iconAlignment;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     final wrappedIcon = IconTheme.merge(
       data: const IconThemeData(size: 18, opticalSize: 18, fill: 1),
       child: icon,
     );
     return Row(
       mainAxisSize: MainAxisSize.min,
+      spacing: _kIconLabelGap,
       children: switch (iconAlignment) {
-        IconAlignment.start => [
-          wrappedIcon,
-          const SizedBox(width: _kIconLabelGap),
-          Flexible(child: label),
-        ],
-        IconAlignment.end => [
-          Flexible(child: label),
-          const SizedBox(width: _kIconLabelGap),
-          wrappedIcon,
-        ],
+        IconAlignment.start => [wrappedIcon, Flexible(child: label)],
+        IconAlignment.end => [Flexible(child: label), wrappedIcon],
       },
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isCustom = CommonButton._isCustomOf(context);
+    final child = _buildContent(context);
+    if (isCustom) {
+      return Padding(
+        padding: CommonButton._defaultPadding(hasIcon: true, hasLabel: true),
+        child: child,
+      );
+    }
+    return child;
   }
 }
 

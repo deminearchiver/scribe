@@ -11,6 +11,7 @@ class WidgetStateLayerColor implements WidgetStateProperty<Color> {
 
   @override
   Color resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) return color.withAlpha(0);
     if (opacity == null) return color.withAlpha(0);
     final alpha = opacity!.resolve(states);
     if (alpha == 0.0) return color.withAlpha(0);

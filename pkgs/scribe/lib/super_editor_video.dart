@@ -701,7 +701,7 @@ class _ExpressiveVideoControlsState extends State<ExpressiveVideoControls> {
                             children: [
                               IconButton(
                                 onPressed: () {},
-                                color: Colors.white,
+
                                 icon: Icon(switch (_volume) {
                                   > 0.0 && < 50.0 => Symbols.volume_down,
                                   >= 50.0 => Symbols.volume_up,
@@ -710,25 +710,33 @@ class _ExpressiveVideoControlsState extends State<ExpressiveVideoControls> {
                               ),
                               IconButton(
                                 onPressed: () => _setLoop(!_loop),
-                                color: Colors.white,
                                 icon: Icon(
                                   _loop ? Symbols.repeat_on : Symbols.repeat,
+                                  color: Colors.white,
                                 ),
                               ),
                               IconButton(
                                 onPressed: () {},
-                                color: Colors.white,
-                                icon: const Icon(Symbols.one_x_mobiledata),
+
+                                icon: const Icon(
+                                  Symbols.one_x_mobiledata,
+                                  color: Colors.white,
+                                ),
                               ),
                               IconButton(
                                 onPressed: () {},
-                                color: Colors.white,
-                                icon: const Icon(Symbols.settings),
+
+                                icon: const Icon(
+                                  Symbols.settings,
+                                  color: Colors.white,
+                                ),
                               ),
                               IconButton(
                                 onPressed: () {},
-                                color: Colors.white,
-                                icon: const Icon(Symbols.fullscreen),
+                                icon: const Icon(
+                                  Symbols.fullscreen,
+                                  color: Colors.white,
+                                ),
                               ),
                             ],
                           ),

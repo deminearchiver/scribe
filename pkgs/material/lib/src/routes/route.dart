@@ -4,20 +4,58 @@ import 'package:flutter/services.dart';
 import 'package:material/material.dart';
 import 'package:flutter/material.dart' as flutter;
 
-class MaterialRoute<T> extends PageRoute<T> {
-  MaterialRoute({
+@immutable
+class MaterialRoutePage<T> extends Page<T> {
+  const MaterialRoutePage({
     this.backgroundColor,
-    super.settings,
-    super.requestFocus,
     this.maintainState = true,
-    required this.builder,
-  }) : super(allowSnapshotting: false, fullscreenDialog: false);
+    this.fullscreenDialog = false,
+    super.key,
+    super.canPop,
+    super.onPopInvoked,
+    super.name,
+    super.arguments,
+    super.restorationId,
+    required this.child,
+  });
 
+  final bool maintainState;
+  final bool fullscreenDialog;
   final Color? backgroundColor;
-  final WidgetBuilder builder;
+  final Widget child;
 
   @override
-  final bool maintainState;
+  Route<T> createRoute(BuildContext context) {
+    return _PageBasedMaterialRoute(page: this);
+  }
+}
+
+class _PageBasedMaterialRoute<T> extends PageRoute<T>
+    with MaterialRouteMixin<T> {
+  _PageBasedMaterialRoute({required MaterialRoutePage<T> page})
+    : super(settings: page);
+
+  MaterialRoutePage<T> get _page => settings as MaterialRoutePage<T>;
+
+  @override
+  bool get maintainState => _page.maintainState;
+
+  @override
+  bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  Color? get backgroundColor => _page.backgroundColor;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
+
+  @override
+  Widget buildContent(BuildContext context) => _page.child;
+}
+
+mixin MaterialRouteMixin<T> on PageRoute<T> {
+  Color? get backgroundColor;
+  Widget buildContent(BuildContext context);
 
   @override
   Color? get barrierColor => null;
@@ -30,32 +68,58 @@ class MaterialRoute<T> extends PageRoute<T> {
 
   static const _transitionCurve = Easing.emphasized;
 
-  // The previous page slides from right to left as the current page appears.
-  static final _secondaryBackwardTranslationTween = Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(-0.25, 0.0),
-  ).chain(CurveTween(curve: _transitionCurve));
+  // // The previous page slides from right to left as the current page appears.
+  // static final _secondaryBackwardTranslationTween = Tween<Offset>(
+  //   begin: Offset.zero,
+  //   end: const Offset(-0.25, 0.0),
+  // ).chain(CurveTween(curve: _transitionCurve));
+
+  // // The previous page slides from left to right as the current page disappears.
+  // static final _secondaryForwardTranslationTween = Tween<Offset>(
+  //   begin: const Offset(-0.25, 0.0),
+  //   end: Offset.zero,
+  // ).chain(CurveTween(curve: _transitionCurve));
+
+  // // The fade in transition when the new page appears.
+  // static final _fadeInTransition = Tween<double>(begin: 0.0, end: 1.0)
+  //     .chain(CurveTween(curve: const Interval(0.25, 1.0)))
+  //     .chain(CurveTween(curve: _transitionCurve));
+  // // ).chain(CurveTween(curve: const Interval(0.0, 0.75)));
+
+  // // The fade out trnasition of the old page when the new page appears.
+  // static final _fadeOutTransition = Tween<double>(
+  //       begin: 1.0,
+  //       end: 0.0, // 0.0
+  //     )
+  //     .chain(CurveTween(curve: const Interval(0.0, 0.25)))
+  //     .chain(CurveTween(curve: _transitionCurve));
+  // ).chain(CurveTween(curve: const Interval(0.0, 0.25)));
+
+  static final Animatable<Offset> _secondaryBackwardTranslationTween =
+      Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-0.25, 0.0),
+      ).chain(CurveTween(curve: _transitionCurve));
 
   // The previous page slides from left to right as the current page disappears.
-  static final _secondaryForwardTranslationTween = Tween<Offset>(
-    begin: const Offset(-0.25, 0.0),
-    end: Offset.zero,
-  ).chain(CurveTween(curve: _transitionCurve));
+  static final Animatable<Offset> _secondaryForwardTranslationTween =
+      Tween<Offset>(
+        begin: const Offset(-0.25, 0.0),
+        end: Offset.zero,
+      ).chain(CurveTween(curve: _transitionCurve));
 
   // The fade in transition when the new page appears.
-  static final _fadeInTransition = Tween<double>(begin: 0.0, end: 1.0)
-      .chain(CurveTween(curve: const Interval(0.25, 1.0)))
-      .chain(CurveTween(curve: _transitionCurve));
-  // ).chain(CurveTween(curve: const Interval(0.0, 0.75)));
+  static final Animatable<double> _fadeInTransition = Tween<double>(
+    begin: 0.0,
+    end: 1.0,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.75)));
 
-  // The fade out trnasition of the old page when the new page appears.
-  static final _fadeOutTransition = Tween<double>(
-        begin: 1.0,
-        end: 0.0, // 0.0
-      )
-      .chain(CurveTween(curve: const Interval(0.0, 0.25)))
-      .chain(CurveTween(curve: _transitionCurve));
-  // ).chain(CurveTween(curve: const Interval(0.0, 0.25)));
+  // The fade out transition of the old page when the new page appears.
+  static final Animatable<double> _fadeOutTransition = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.25)));
+
   @override
   DelegatedTransitionBuilder? get delegatedTransition =>
       (context, animation, secondaryAnimation, allowSnapshotting, child) =>
@@ -66,6 +130,51 @@ class MaterialRoute<T> extends PageRoute<T> {
             backgroundColor,
             child,
           );
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return PredictiveBackGestureDetector(
+      route: this,
+      builder: (context, phase, startBackEvent, currentBackEvent) {
+        // TODO: bring back this behaviour
+        // if (popGestureInProgress) {
+        //   return _PredictiveBackPageSharedElementTransition(
+        //     isDelegatedTransition: false,
+        //     animation: animation,
+        //     phase: phase,
+        //     secondaryAnimation: secondaryAnimation,
+        //     startBackEvent: startBackEvent,
+        //     currentBackEvent: currentBackEvent,
+        //     child: child,
+        //   );
+        // }
+        return _FadeForwardsPageTransition(
+          backgroundColor: backgroundColor,
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return Semantics(
+      scopesRoute: true,
+      explicitChildNodes: true,
+      child: buildContent(context),
+    );
+  }
 
   static Widget? _delegatedTransition(
     BuildContext context,
@@ -117,69 +226,48 @@ class MaterialRoute<T> extends PageRoute<T> {
       },
       child: child,
     );
-    return PredictiveBackGestureListener(
-      route: route,
-      builder: (context, phase, startBackEvent, currentBackEvent) {
-        if (route.popGestureInProgress) {
-          return _PredictiveBackPageSharedElementTransition(
-            isDelegatedTransition: true,
-            animation: animation,
-            phase: phase,
-            secondaryAnimation: secondaryAnimation,
-            startBackEvent: startBackEvent,
-            currentBackEvent: currentBackEvent,
-            child: child,
-          );
-        }
-        return transition;
-      },
-    );
+    return transition;
+    // TODO: bring back this behaviour
+    // return PredictiveBackGestureListener(
+    //   route: route,
+    //   builder: (context, phase, startBackEvent, currentBackEvent) {
+    //     if (route.popGestureInProgress) {
+    //       return _PredictiveBackPageSharedElementTransition(
+    //         isDelegatedTransition: true,
+    //         animation: animation,
+    //         phase: phase,
+    //         secondaryAnimation: secondaryAnimation,
+    //         startBackEvent: startBackEvent,
+    //         currentBackEvent: currentBackEvent,
+    //         child: child,
+    //       );
+    //     }
+    //     return transition;
+    //   },
+    // );
+  }
+}
+
+class MaterialRoute<T> extends PageRoute<T> with MaterialRouteMixin<T> {
+  MaterialRoute({
+    this.backgroundColor,
+    super.settings,
+    super.requestFocus,
+    this.maintainState = true,
+    required this.builder,
+  }) : super(allowSnapshotting: false, fullscreenDialog: false) {
+    assert(opaque);
   }
 
   @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return PredictiveBackGestureDetector(
-      route: this,
-      builder: (context, phase, startBackEvent, currentBackEvent) {
-        if (popGestureInProgress) {
-          return _PredictiveBackPageSharedElementTransition(
-            isDelegatedTransition: false,
-            animation: animation,
-            phase: phase,
-            secondaryAnimation: secondaryAnimation,
-            startBackEvent: startBackEvent,
-            currentBackEvent: currentBackEvent,
-            child: child,
-          );
-        }
-        return _FadeForwardsPageTransition(
-          backgroundColor: backgroundColor,
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          child: child,
-        );
-      },
-    );
-  }
+  final Color? backgroundColor;
+  final WidgetBuilder builder;
 
   @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
-    flutter.MaterialPageRoute;
-    return Semantics(
-      scopesRoute: true,
-      explicitChildNodes: true,
-      child: builder(context),
-    );
-  }
+  final bool maintainState;
+
+  @override
+  Widget buildContent(BuildContext context) => builder(context);
 }
 
 class _FadeForwardsPageTransition extends StatelessWidget {
@@ -198,17 +286,28 @@ class _FadeForwardsPageTransition extends StatelessWidget {
 
   final Widget? child;
 
-  // The new page slides in from right to left.
+  // // The new page slides in from right to left.
+  // static final Animatable<Offset> _forwardTranslationTween = Tween<Offset>(
+  //   begin: const Offset(0.25, 0.0),
+  //   end: Offset.zero,
+  // ).chain(CurveTween(curve: MaterialRouteMixin._transitionCurve));
+
+  // // The old page slides back from left to right.
+  // static final Animatable<Offset> _backwardTranslationTween = Tween<Offset>(
+  //   begin: Offset.zero,
+  //   end: const Offset(0.25, 0.0),
+  // ).chain(CurveTween(curve: MaterialRouteMixin._transitionCurve));
+
   static final Animatable<Offset> _forwardTranslationTween = Tween<Offset>(
     begin: const Offset(0.25, 0.0),
     end: Offset.zero,
-  ).chain(CurveTween(curve: MaterialRoute._transitionCurve));
+  ).chain(CurveTween(curve: MaterialRouteMixin._transitionCurve));
 
   // The old page slides back from left to right.
   static final Animatable<Offset> _backwardTranslationTween = Tween<Offset>(
     begin: Offset.zero,
     end: const Offset(0.25, 0.0),
-  ).chain(CurveTween(curve: MaterialRoute._transitionCurve));
+  ).chain(CurveTween(curve: MaterialRouteMixin._transitionCurve));
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +319,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
         Widget? child,
       ) {
         return FadeTransition(
-          opacity: MaterialRoute._fadeInTransition.animate(animation),
+          opacity: MaterialRouteMixin._fadeInTransition.animate(animation),
           child: SlideTransition(
             position: _forwardTranslationTween.animate(animation),
             child: child,
@@ -233,7 +332,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
         Widget? child,
       ) {
         return FadeTransition(
-          opacity: MaterialRoute._fadeOutTransition.animate(animation),
+          opacity: MaterialRouteMixin._fadeOutTransition.animate(animation),
           child: SlideTransition(
             position: _backwardTranslationTween.animate(animation),
             child: child,

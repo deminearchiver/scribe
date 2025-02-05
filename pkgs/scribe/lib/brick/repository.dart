@@ -5,8 +5,9 @@ import 'package:brick_sqlite/memory_cache_provider.dart';
 // This hide is for Brick's @Supabase annotation; in most cases,
 // supabase_flutter **will not** be imported in application code.
 import 'package:brick_supabase/brick_supabase.dart' hide Supabase;
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi;
-import 'package:sqflite/sqflite.dart' show databaseFactory;
+import 'package:sqflite/sqflite.dart' show DatabaseFactory;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi;
+// import 'package:sqflite/sqflite.dart' show databaseFactory;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'brick.g.dart';
@@ -26,6 +27,8 @@ class Repository extends OfflineFirstWithSupabaseRepository {
   });
 
   static Future<void> configure({
+    required DatabaseFactory databaseFactory,
+    required String databasePath,
     required String supabaseUrl,
     required String supabaseAnonKey,
   }) async {
@@ -48,12 +51,12 @@ class Repository extends OfflineFirstWithSupabaseRepository {
     _instance = Repository._(
       supabaseProvider: provider,
       sqliteProvider: SqliteProvider(
-        "supabase.sqlite",
+        databasePath,
         databaseFactory: databaseFactory,
         // databaseFactory: databaseFactoryFfi,
         modelDictionary: sqliteModelDictionary,
       ),
-      migrations: {},
+      migrations: migrations,
       offlineRequestQueue: queue,
       // Specify class types that should be cached in memory
       memoryCacheProvider: MemoryCacheProvider(),

@@ -183,7 +183,7 @@ class _CircularProgressIndicatorState extends State<CircularProgressIndicator> {
       indicatorColor = iconTheme.color!;
       strokeWidth = 2;
     } else {
-      constraints = const BoxConstraints.tightFor(width: 48, height: 48);
+      constraints = const BoxConstraints.tightFor(width: 40, height: 40);
     }
 
     return determinate

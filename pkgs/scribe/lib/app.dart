@@ -1,10 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:follow_the_leader/follow_the_leader.dart';
 import 'package:painting/painting.dart';
 import 'package:scribe/debug.dart';
-import 'package:scribe/l10n/l10n.dart';
+import 'package:scribe/home.dart';
+import 'package:scribe/i18n/strings.g.dart';
+import 'package:scribe/list_detail.dart';
+import 'package:scribe/onboarding_auth.dart';
+import 'package:scribe/views/primary/list_detail_view.dart';
 import 'package:scribe/onboarding.dart';
 // import 'package:scribe/editor/audio.dart';
 // import 'package:scribe/editor/iframe.dart';
@@ -13,7 +18,7 @@ import 'package:scribe/services.dart';
 import 'package:scribe/super_editor_video.dart';
 import 'package:scribe/theme.dart';
 import 'package:material/material.dart';
-import 'package:scribe/views/auth/auth.dart';
+import 'package:scribe/views/auth.dart';
 import 'package:scribe/widgets/add_close.dart';
 import 'package:scribe/widgets/fab.dart';
 import 'package:super_editor/super_editor.dart';
@@ -38,10 +43,31 @@ class _AppState extends State<App> {
     //     }
     //   }
     // });
+    return const _TranslationPart(child: _AppPart());
+  }
+}
+
+class _TranslationPart extends StatelessWidget {
+  const _TranslationPart({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return TranslationProvider(child: child);
+  }
+}
+
+class _AppPart extends StatelessWidget {
+  const _AppPart({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      supportedLocales: LocalizationsRegistry.supportedLocales,
-      localizationsDelegates: LocalizationsRegistry.localizationsDelegates,
+      locale: TranslationProvider.of(context).flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
 
       themeMode: ThemeMode.system,
       theme: AppTheme.custom(brightness: Brightness.light),
@@ -62,7 +88,12 @@ class _AppState extends State<App> {
         );
       },
       // home: const HomeView(),
-      home: const OnboardingFlow(),
+      // home: const OnboardingFlow(),
+      // home: const NavigationView(),
+      // home: const ListDetail(),
+      home: const ListDetailView(),
+      // home: const AccountView(),
+      // home: const OnboardingAuth(),
     );
   }
 }
@@ -73,8 +104,6 @@ class ShapeView extends StatefulWidget {
   @override
   State<ShapeView> createState() => _ShapeViewState();
 }
-
-AnimationController? _;
 
 class _ShapeViewState extends State<ShapeView>
     with SingleTickerProviderStateMixin {
@@ -571,32 +600,32 @@ class _HomeViewState extends State<HomeView> {
                   actions: [
                     IconButton(
                       onPressed: () {},
-                      isSelected: true,
+                      selected: true,
                       icon: const Icon(Symbols.format_bold),
                     ),
                     IconButton(
                       onPressed: () {},
-                      isSelected: false,
+                      selected: false,
                       icon: const Icon(Symbols.format_italic),
                     ),
                     IconButton(
                       onPressed: () {},
-                      isSelected: false,
+                      selected: false,
                       icon: const Icon(Symbols.format_underlined),
                     ),
                     IconButton(
                       onPressed: () {},
-                      isSelected: false,
+                      selected: false,
                       icon: const Icon(Symbols.format_color_text_rounded),
                     ),
                     IconButton(
                       onPressed: () {},
-                      isSelected: false,
+                      selected: false,
                       icon: const Icon(Symbols.format_color_fill_rounded),
                     ),
                     IconButton(
                       onPressed: () {},
-                      isSelected: true,
+                      selected: true,
                       icon: const Icon(Symbols.format_h1),
                     ),
                   ],
@@ -750,32 +779,32 @@ class _ToolbarState extends State<Toolbar> {
       actions: [
         IconButton(
           onPressed: () {},
-          isSelected: true,
+          selected: true,
           icon: const Icon(Symbols.format_bold),
         ),
         IconButton(
           onPressed: () {},
-          isSelected: false,
+          selected: false,
           icon: const Icon(Symbols.format_italic),
         ),
         IconButton(
           onPressed: () {},
-          isSelected: false,
+          selected: false,
           icon: const Icon(Symbols.format_underlined),
         ),
         IconButton(
           onPressed: () {},
-          isSelected: false,
+          selected: false,
           icon: const Icon(Symbols.format_color_text_rounded),
         ),
         IconButton(
           onPressed: () {},
-          isSelected: false,
+          selected: false,
           icon: const Icon(Symbols.format_color_fill_rounded),
         ),
         IconButton(
           onPressed: () {},
-          isSelected: true,
+          selected: true,
           icon: const Icon(Symbols.format_h1),
         ),
       ],

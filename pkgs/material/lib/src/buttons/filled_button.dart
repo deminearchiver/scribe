@@ -76,6 +76,21 @@ class FilledButton extends CommonButton {
     required super.label,
   });
 
+  const FilledButton.custom({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.iconAlignment,
+    required super.child,
+  }) : super.custom();
+
   @override
   ButtonStyle? themeStyleOf(BuildContext context) {
     return FilledButtonTheme.of(context).style;
@@ -108,7 +123,7 @@ class FilledButton extends CommonButton {
       autofocus: autofocus,
       clipBehavior: clipBehavior,
       statesController: statesController,
-      child: _buildChild(context),
+      child: child,
     );
   }
 }

@@ -78,7 +78,6 @@ class _AnimatedDefaultTextStyleState
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("${_styleTween?.evaluate(animation)}");
     return DefaultTextStyle.merge(
       style: _styleTween?.evaluate(animation) ?? widget.style,
       child: widget.child,

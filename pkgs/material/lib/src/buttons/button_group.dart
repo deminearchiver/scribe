@@ -39,38 +39,37 @@ class ButtonGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lastIndex = children.length - 1;
-    return Row(
+    return Flex.horizontal(
+      spacing: 4.0,
       children: [
-        ...children
-            .mapIndexed<Widget>((index, child) {
-              final isFirst = index == 0;
-              final isLast = index == lastIndex;
-              return CommonButtonTheme(
-                data: CommonButtonThemeData(
-                  style: ButtonStyle(
-                    shape: WidgetStatePropertyAll(
-                      RoundBorder(
-                        topLeft: isFirst ? null : Corners.small,
-                        topRight: isLast ? null : Corners.small,
-                        bottomRight: isLast ? null : Corners.small,
-                        bottomLeft: isFirst ? null : Corners.small,
-                      ),
-                    ),
-                    // padding:
-                    //     isFirst || isLast
-                    //         ? WidgetStatePropertyAll(
-                    //           EdgeInsets.only(
-                    //             left: isFirst ? 16 : 12,
-                    //             right: isLast ? 16 : 16,
-                    //           ),
-                    //         )
-                    //         : null,
+        ...children.mapIndexed<Widget>((index, child) {
+          final isFirst = index == 0;
+          final isLast = index == lastIndex;
+          return CommonButtonTheme(
+            data: CommonButtonThemeData(
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundBorder(
+                    topLeft: isFirst ? null : Corners.small,
+                    topRight: isLast ? null : Corners.small,
+                    bottomRight: isLast ? null : Corners.small,
+                    bottomLeft: isFirst ? null : Corners.small,
                   ),
                 ),
-                child: child,
-              );
-            })
-            .intersperse((index) => const SizedBox(width: 2)),
+                // padding:
+                //     isFirst || isLast
+                //         ? WidgetStatePropertyAll(
+                //           EdgeInsets.only(
+                //             left: isFirst ? 16 : 12,
+                //             right: isLast ? 16 : 16,
+                //           ),
+                //         )
+                //         : null,
+              ),
+            ),
+            child: child,
+          );
+        }),
       ],
     );
   }

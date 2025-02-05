@@ -75,6 +75,20 @@ class ElevatedButton extends CommonButton {
     super.icon,
     required super.label,
   });
+  const ElevatedButton.custom({
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.iconAlignment,
+    required super.child,
+  }) : super.custom();
 
   @override
   ButtonStyle? themeStyleOf(BuildContext context) {
@@ -107,7 +121,7 @@ class ElevatedButton extends CommonButton {
       autofocus: autofocus,
       clipBehavior: clipBehavior,
       statesController: statesController,
-      child: _buildChild(context),
+      child: child,
     );
   }
 }

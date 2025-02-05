@@ -3,88 +3,162 @@ import 'package:flutter/foundation.dart';
 import 'package:gap/gap.dart';
 import 'package:material/material.dart';
 
-class AccordionItem<T> with Diagnosticable {
+enum AccordionItemVariant { primary, secondary, filled, outlined }
+
+class AccordionItem with Diagnosticable {
   const AccordionItem({
-    required this.value,
+    this.onPressed,
+    required this.expanded,
+    required this.variant,
+    this.borderRadius,
     this.leading,
     required this.headline,
     this.supportingText,
+    this.trailing,
     required this.child,
   });
+  const AccordionItem.primary({
+    this.onPressed,
+    required this.expanded,
+    this.borderRadius,
+    this.leading,
+    required this.headline,
+    this.supportingText,
+    this.trailing,
+    required this.child,
+  }) : variant = AccordionItemVariant.primary;
+  const AccordionItem.secondary({
+    this.onPressed,
+    required this.expanded,
+    this.borderRadius,
+    this.leading,
+    required this.headline,
+    this.supportingText,
+    this.trailing,
+    required this.child,
+  }) : variant = AccordionItemVariant.secondary;
+  const AccordionItem.filled({
+    this.onPressed,
+    required this.expanded,
+    this.borderRadius,
+    this.leading,
+    required this.headline,
+    this.supportingText,
+    this.trailing,
+    required this.child,
+  }) : variant = AccordionItemVariant.filled;
+  const AccordionItem.outlined({
+    this.onPressed,
+    required this.expanded,
+    this.borderRadius,
+    this.leading,
+    required this.headline,
+    this.supportingText,
+    this.trailing,
+    required this.child,
+  }) : variant = AccordionItemVariant.outlined;
 
-  final T value;
+  final VoidCallback? onPressed;
+  final bool expanded;
+  final AccordionItemVariant variant;
+
+  /// Replaces the item's borderRadius at all times
+  final BorderRadius? borderRadius;
 
   final Widget? leading;
   final Widget headline;
   final Widget? supportingText;
-  final Widget child;
+  final Widget? trailing;
+
+  /// If this is null, then this item won't be able to become expanded
+  final Widget? child;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<T>("value", value));
+    properties.add(DiagnosticsProperty<bool>("expanded", expanded));
+    properties.add(EnumProperty<AccordionItemVariant>("variant", variant));
   }
 }
 
-class Accordion<T> extends StatefulWidget {
-  const Accordion({
-    super.key,
-    this.onExpandedChanged,
-    required this.expanded,
-    required this.items,
-  }) : assert(items.length >= 2);
+class Accordion extends StatefulWidget {
+  const Accordion({super.key, required this.items}) : assert(items.length >= 1);
 
-  final ValueChanged<Set<T>>? onExpandedChanged;
-  final Set<T> expanded;
-  final List<AccordionItem<T>> items;
+  final List<AccordionItem> items;
 
   @override
-  State<Accordion<T>> createState() => _AccordionState<T>();
+  State<Accordion> createState() => _AccordionState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<ValueChanged<Set<T>>>(
-        "onExpandedChanged",
-        onExpandedChanged,
-        defaultValue: null,
-      ),
-    );
-    properties.add(DiagnosticsProperty<Set<T>>("expanded", expanded));
-    properties.add(DiagnosticsProperty<List<AccordionItem<T>>>("items", items));
+    // properties.add(
+    //   DiagnosticsProperty<ValueChanged<Set<T>>>(
+    //     "onExpandedChanged",
+    //     onExpandedChanged,
+    //     defaultValue: null,
+    //   ),
+    // );
+    // properties.add(DiagnosticsProperty<Set<T>>("expanded", expanded));
+    properties.add(DiagnosticsProperty<List<AccordionItem>>("items", items));
   }
 }
 
-class _AccordionState<T> extends State<Accordion<T>> {
+class _AccordionState extends State<Accordion> {
   Widget _buildItem({
     required BuildContext context,
     required int index,
-    required List<AccordionItem<T>> items,
-    required AccordionItem<T> item,
+    required List<AccordionItem> items,
+    required AccordionItem item,
   }) {
     final theme = Theme.of(context);
     final stateTheme = StateTheme.of(context);
 
-    final isExpanded = widget.expanded.contains(item.value);
+    final previousItem = index > 0 ? items[index - 1] : null;
+    final nextItem = index < items.length - 1 ? items[index + 1] : null;
+    final isPreviousExpanded = previousItem?.expanded ?? false;
+    final isNextExpanded = nextItem?.expanded ?? false;
+    final isExpanded = item.expanded && item.child != null;
+    final backgroundColor = switch (item.variant) {
+      AccordionItemVariant.primary => theme.colorScheme.primaryContainer,
+      AccordionItemVariant.secondary => theme.colorScheme.secondaryContainer,
+      AccordionItemVariant.filled => theme.colorScheme.surfaceContainerHighest,
+      AccordionItemVariant.outlined => Colors.transparent,
+    };
+    final foregroundColor = switch (item.variant) {
+      AccordionItemVariant.primary => theme.colorScheme.onPrimaryContainer,
+      AccordionItemVariant.secondary => theme.colorScheme.onSecondaryContainer,
+      AccordionItemVariant.filled => theme.colorScheme.onSurface,
+      AccordionItemVariant.outlined => theme.colorScheme.onSurface,
+    };
+    final side = switch (item.variant) {
+      AccordionItemVariant.outlined => BorderSide(
+        color: theme.colorScheme.outlineVariant,
+      ),
+      _ => BorderSide.none,
+    };
 
-    final topBorderRadius =
-        isExpanded ||
-                index == 0 ||
-                widget.expanded.contains(items[index - 1].value)
-            ? Radii.extraLarge
-            : Radii.small;
-    final bottomBorderRadius =
-        isExpanded ||
-                index == items.length - 1 ||
-                widget.expanded.contains(items[index + 1].value)
-            ? Radii.extraLarge
-            : Radii.small;
-    final borderRadius = BorderRadius.vertical(
-      bottom: bottomBorderRadius,
-      top: topBorderRadius,
-    );
-    final shape = RoundedRectangleBorder(borderRadius: borderRadius);
+    OutlinedBorder shape;
+    if (item.borderRadius != null) {
+      shape = RoundedRectangleBorder(
+        borderRadius: item.borderRadius!,
+        side: side,
+      );
+    } else {
+      final topBorderRadius =
+          isExpanded || index == 0 || isPreviousExpanded
+              ? Radii.extraLarge
+              : Radii.small;
+      final bottomBorderRadius =
+          isExpanded || index == items.length - 1 || isNextExpanded
+              ? Radii.extraLarge
+              : Radii.small;
+      final borderRadius = BorderRadius.vertical(
+        bottom: bottomBorderRadius,
+        top: topBorderRadius,
+      );
+      shape = RoundedRectangleBorder(borderRadius: borderRadius, side: side);
+    }
 
     return TweenAnimationBuilder<ShapeBorder?>(
       tween: ShapeBorderTween(end: shape),
@@ -96,15 +170,9 @@ class _AccordionState<T> extends State<Accordion<T>> {
           ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 64),
             child: InkWell(
-              onTap: () {
-                final view = UnmodifiableSetView<T>({
-                  ...widget.expanded.whereNot((value) => value == item.value),
-                  if (!isExpanded) item.value,
-                });
-                widget.onExpandedChanged?.call(view);
-              },
+              onTap: item.onPressed,
               overlayColor: WidgetStateLayerColor(
-                theme.colorScheme.onSecondaryContainer,
+                foregroundColor,
                 opacity: stateTheme.stateLayerOpacity,
               ),
               child: Padding(
@@ -119,7 +187,7 @@ class _AccordionState<T> extends State<Accordion<T>> {
                         data: IconThemeData(
                           size: 24,
                           opticalSize: 24,
-                          color: theme.colorScheme.onSecondaryContainer,
+                          color: foregroundColor,
                         ),
                         child: item.leading!,
                       ),
@@ -132,7 +200,7 @@ class _AccordionState<T> extends State<Accordion<T>> {
                         children: [
                           DefaultTextStyle.merge(
                             style: theme.textTheme.bodyLarge!.copyWith(
-                              color: theme.colorScheme.onSecondaryContainer,
+                              color: foregroundColor,
                             ),
                             child: item.headline,
                           ),
@@ -147,36 +215,43 @@ class _AccordionState<T> extends State<Accordion<T>> {
                       ),
                     ),
                     const Gap(16.0),
-                    AnimatedRotation(
-                      turns: isExpanded ? 0.5 : 0.0,
-                      duration: Durations.medium4,
-                      curve: Easing.standard,
-                      child: Icon(
-                        Symbols.keyboard_arrow_down,
-                        color:
-                            isExpanded
-                                ? theme.colorScheme.onSurfaceVariant
-                                : theme.colorScheme.onSecondaryContainer,
+                    if (item.child != null && item.trailing == null)
+                      AnimatedRotation(
+                        turns: isExpanded ? 0.5 : 0.0,
+                        duration: Durations.medium4,
+                        curve: Easing.standard,
+                        child: Icon(
+                          Symbols.keyboard_arrow_down,
+                          color:
+                              isExpanded
+                                  ? theme.colorScheme.onSurfaceVariant
+                                  : foregroundColor,
+                        ),
                       ),
-                    ),
+                    if (item.trailing != null)
+                      IconTheme.merge(
+                        data: IconThemeData(color: foregroundColor),
+                        child: item.trailing!,
+                      ),
                   ],
                 ),
               ),
             ),
           ),
-          AnimatedOpacity(
-            duration: Durations.medium4,
-            curve: Easing.standard,
-            opacity: isExpanded ? 1.0 : 0.0,
-            child: AnimatedAlign(
-              // alignment: Alignment.topCenter,
-              alignment: Alignment(0, -0.75),
+          if (item.child != null)
+            AnimatedOpacity(
               duration: Durations.medium4,
               curve: Easing.standard,
-              heightFactor: isExpanded ? 1.0 : 0.0,
-              child: item.child,
+              opacity: isExpanded ? 1.0 : 0.0,
+              child: AnimatedAlign(
+                // alignment: Alignment.topCenter,
+                alignment: Alignment(0, -0.75),
+                duration: Durations.medium4,
+                curve: Easing.standard,
+                heightFactor: isExpanded ? 1.0 : 0.0,
+                child: SizedBox(width: double.infinity, child: item.child),
+              ),
             ),
-          ),
         ],
       ),
       builder:
@@ -184,7 +259,7 @@ class _AccordionState<T> extends State<Accordion<T>> {
             animationDuration: Duration.zero,
             clipBehavior: Clip.antiAlias,
             shape: value,
-            color: theme.colorScheme.secondaryContainer,
+            color: backgroundColor,
             child: child!,
           ),
     );

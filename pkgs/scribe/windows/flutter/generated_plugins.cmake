@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
-  dynamic_color
+  dynamic_system_colors
   media_kit_libs_windows_video
   media_kit_video
   screen_brightness_windows
